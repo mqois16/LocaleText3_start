@@ -32,7 +32,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,11 +53,14 @@ public class MainActivity extends AppCompatActivity {
     // Fixed price in U.S. dollars and cents: ten cents.
     private double mPrice = 0.10;
 
+    double mIdExchangeRate= 14000;
     // Exchange rates for France (FR) and Israel (IW).
     double mFrExchangeRate = 0.93; // 0.93 euros = $1.
     double mIwExchangeRate = 3.61; // 3.61 new shekels = $1.
 
     // TODO: Get locale's currency.
+    private NumberFormat mNumberFormat= NumberFormat.getInstance();
+    private NumberFormat mCurrencyFormat = NumberFormat.getCurrencyInstance();
 
     /**
      * Creates the view with a toolbar for the options menu
@@ -83,11 +90,22 @@ public class MainActivity extends AppCompatActivity {
         // Set the expiration date as the date to display.
         myDate.setTime(expirationDate);
 
-        // TODO: Format the date for the locale.
+        String myFormattedDate= DateFormat.getDateInstance().format(myDate);
+        TextView expDateView=findViewById(R.id.date);
+        expDateView.setText(myFormattedDate);
 
-        // TODO: Apply the exchange rate and calculate the price.
+        String myFormattedPrice;
+        String deviceLocale= Locale.getDefault().getCountry();
+        if (deviceLocale.equals("ID")){
+            mPrice*=mIdExchangeRate;
+            myFormattedPrice=mCurrencyFormat.format(mPrice);
+        }else{
+            mCurrencyFormat=NumberFormat.getCurrencyInstance(Locale.US);
+            myFormattedPrice=mCurrencyFormat.format(mPrice);
+        }
+        TextView localePrice=findViewById(R.id.price);
+        localePrice.setText(myFormattedPrice);
 
-        // TODO: Show the price string.
 
         // Get the EditText view for the entered quantity.
         final EditText enteredQuantity = (EditText) findViewById(R.id.quantity);
@@ -106,15 +124,16 @@ public class MainActivity extends AppCompatActivity {
                         // Don't format, leave alone.
                     } else {
 
-                        // TODO: Parse string in view v to a number.
+                        try {
+                            mInputQuantity=mNumberFormat.parse(v.getText().toString()).intValue();
+                            v.setError(null);
+                            String myFormatQuantity=mNumberFormat.format(mInputQuantity);
+                            v.setText(myFormatQuantity);
+                        } catch (ParseException e) {
+                            v.setError(getText(R.string.enter_number));
+                            e.printStackTrace();
+                        }
 
-                        // TODO: Convert to string using locale's number format.
-
-                        // TODO: Homework: Calculate the total amount from price and quantity.
-
-                        // TODO: Homework: Use currency format for France (FR) or Israel (IL).
-
-                        // TODO: Homework: Show the total amount string.
 
                         return true;
                     }
