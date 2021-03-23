@@ -106,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
         TextView localePrice=findViewById(R.id.price);
         localePrice.setText(myFormattedPrice);
 
+        final TextView totalPrice= findViewById(R.id.total);
+
 
         // Get the EditText view for the entered quantity.
         final EditText enteredQuantity = (EditText) findViewById(R.id.quantity);
@@ -129,6 +131,11 @@ public class MainActivity extends AppCompatActivity {
                             v.setError(null);
                             String myFormatQuantity=mNumberFormat.format(mInputQuantity);
                             v.setText(myFormatQuantity);
+                            //hitung dan format total
+                            double total=mInputQuantity*mPrice;
+                            String myFormattedTotalPrice=mCurrencyFormat.format(total);
+                            totalPrice.setText(myFormattedTotalPrice);
+
                         } catch (ParseException e) {
                             v.setError(getText(R.string.enter_number));
                             e.printStackTrace();
